@@ -1,26 +1,79 @@
-const SIZE:i32 = 11;
-const PRIMES: [i32;23] = [5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97 ];
+use std::{io, process::exit};
 fn main() {
-                        
-    let source1: i128 = 999999999;
-    let mut rems1 = [0;SIZE as usize];
-    for i in 0..SIZE as usize{
-        rems1[i] = (source1 % PRIMES[i] as i128) as i32;
-    }
+    println!("Provide operation mode");
+    println!("1: convert value into array of reminders");
+    println!("2: convert array of reminders into value");
+    let mut profile= String::new();
+    io::stdin().read_line(&mut profile).unwrap_or_else(|_| {println!("wrogn value provided"); exit(0);});
+    let res:Result<i32, _> = profile[..(profile.len() -1)].parse();
+    match res {
+        Ok(res) => {
+            match res {
+                1 => {disassemble();}
+                2 => {assemble();}
+                i32::MIN..=0 |3.. => {
 
-    //println!("l1:{}\n{:?}\n", conv_m1(rems1), rems1);
-    println!("l1:{}\n {:?}\n", conv_m2(rems1), rems1);
+                }
+            }
+        }
+        Err(_) => {
+            println!("wrong value provided");
+            exit(0);
+        }   
+    }
 }
 
-fn conv_m1(rems: [i32; SIZE as usize]) -> i128{
+fn disassemble() {
+    let mut buf1 = String::new();
+    let mut buf2 = String::new();
+    println!("give value to convert");
+    io::stdin().read_line(&mut buf1).unwrap_or_else(|_| {println!("wrogn value provided"); exit(0);});
+    let source1: i128 = buf1[..(buf1.len() -1)].parse().unwrap_or_else(|_| {println!("wrogn value provided"); exit(0);});
+    println!("give array of reminders sepparated by white spaces");
+    io::stdin().read_line(&mut buf2).unwrap_or_else(|_| {println!("wrogn value provided"); exit(0);});
+    let mut rems1: Vec<i32> = vec![];
+    for element in  buf2.split_whitespace().collect::<Vec<&str>>() {
+        let div:i32 = element.parse().unwrap_or_else(|_| {println!("wrogn value provided"); exit(0);});
+        rems1.append(&mut vec![(source1 % div as i128) as i32]);   
+    }
+    println!("{:?}\n", rems1);
+}
+
+fn assemble() {
+    let mut buf1 = String::new();
+    println!("give array of reminders sepparated by white spaces");
+    io::stdin().read_line(&mut buf1).unwrap_or_else(|_| {println!("wrogn value provided"); exit(0);});
+    let mut rems: Vec<i32> = vec![];
+    for element in  buf1.split_whitespace().collect::<Vec<&str>>() {
+        let rem:i32 = element.parse().unwrap_or_else(|_| {println!("wrogn value provided"); exit(0);});
+        rems.append(&mut vec![rem]); 
+    }
+    let mut buf2 = String::new();
+    println!("give array of dividers sepparated by white spaces");
+    io::stdin().read_line(&mut buf2).unwrap_or_else(|_| {println!("wrogn value provided"); exit(0);});
+    let mut divs: Vec<i32> = vec![];
+    for element in  buf2.split_whitespace().collect::<Vec<&str>>() {
+        let div:i32 = element.parse().unwrap_or_else(|_| {println!("wrogn value provided"); exit(0);});
+        divs.append(&mut vec![div]); 
+    }
+
+    if rems.len() == divs.len() {
+        println!("{}",conv_m2(rems, divs));
+    } else {
+        println!("dividers array is not the same length as array of reminders")
+    }
+
+}
+
+fn conv_m1(rems: Vec<i32>, divs: Vec<i32>) -> i128{
     let mut x:i128 = 0;
     loop {
         let mut j = 0;
-        for _ in 0..SIZE as usize {
-            if x % PRIMES[j] as i128 != rems[j] as i128  {break;}
+        for _ in 0..divs.len() as usize {
+            if x % divs[j] as i128 != rems[j] as i128  {break;}
             j+=1;
         }
-        if j == SIZE as usize{
+        if j == divs.len() as usize{
             return x;
         }
         x+=1;
@@ -57,16 +110,20 @@ fn euc(d1:i128, d2:i128) -> EucRes {
     };
 }
 
-fn conv_m2(rems: [i32; SIZE as usize]) -> i128 {
+fn conv_m2(rems: Vec<i32>, divs: Vec<i32>) -> i128 {
     let mut m:i128 = 1;
-    for i in 0..SIZE as usize{
-        m*= PRIMES[i] as i128;
+    for i in 0..divs.len() as usize{
+        m*= divs[i] as i128;
     }
 
     let mut res:i128 = 0;
-    for i in 0..SIZE as usize {
-        let mi = m/PRIMES[i] as i128;
-        res += rems[i]  as i128 * euc(mi, PRIMES[i] as i128)._s * mi;
+    for i in 0..divs.len() as usize {
+        let mi = m/divs[i] as i128;
+        if euc(mi, divs[i] as i128)._s > 0 {
+            res += rems[i] as i128 * euc(mi, divs[i] as i128)._s * mi;
+        } else {
+            res += rems[i] as i128 * (euc(mi, divs[i] as i128)._s + divs[i] as i128) * mi;
+        }
     }
     return res % m
 }
