@@ -48,6 +48,7 @@ fn assemble() {
         let rem:i32 = element.parse().unwrap_or_else(|_| {println!("wrogn value provided"); exit(0);});
         rems.append(&mut vec![rem]); 
     }
+    
     let mut buf2 = String::new();
     println!("give array of dividers sepparated by white spaces");
     io::stdin().read_line(&mut buf2).unwrap_or_else(|_| {println!("wrogn value provided"); exit(0);});
@@ -65,6 +66,7 @@ fn assemble() {
 
 }
 
+/*
 fn conv_m1(rems: Vec<i32>, divs: Vec<i32>) -> i128{
     let mut x:i128 = 0;
     loop {
@@ -79,6 +81,7 @@ fn conv_m1(rems: Vec<i32>, divs: Vec<i32>) -> i128{
         x+=1;
     }
 }
+*/
 
 #[derive(Debug)]
 struct EucRes {
