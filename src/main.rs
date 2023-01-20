@@ -3,6 +3,7 @@ fn main() {
     println!("Provide operation mode");
     println!("1: convert value into array of reminders");
     println!("2: convert array of reminders into value");
+    println!("3: add two arrays of reminders and convert them into value");
     let mut profile= String::new();
     io::stdin().read_line(&mut profile).unwrap_or_else(|_| {println!("wrogn value provided"); exit(0);});
     let res:Result<i32, _> = profile[..(profile.len() -1)].parse();
@@ -11,6 +12,7 @@ fn main() {
             match res {
                 1 => {disassemble();}
                 2 => {assemble();}
+                3 => {add();}
                 i32::MIN..=0 |3.. => {
 
                 }
@@ -48,7 +50,7 @@ fn assemble() {
         let rem:i32 = element.parse().unwrap_or_else(|_| {println!("wrogn value provided"); exit(0);});
         rems.append(&mut vec![rem]); 
     }
-    
+
     let mut buf2 = String::new();
     println!("give array of dividers sepparated by white spaces");
     io::stdin().read_line(&mut buf2).unwrap_or_else(|_| {println!("wrogn value provided"); exit(0);});
@@ -66,22 +68,44 @@ fn assemble() {
 
 }
 
-/*
-fn conv_m1(rems: Vec<i32>, divs: Vec<i32>) -> i128{
-    let mut x:i128 = 0;
-    loop {
-        let mut j = 0;
-        for _ in 0..divs.len() as usize {
-            if x % divs[j] as i128 != rems[j] as i128  {break;}
-            j+=1;
+fn add() {
+    let mut buf1 = String::new();
+    println!("give first array of reminders sepparated by white spaces");
+    io::stdin().read_line(&mut buf1).unwrap_or_else(|_| {println!("wrogn value provided"); exit(0);});
+    let mut rems1: Vec<i32> = vec![];
+    for element in  buf1.split_whitespace().collect::<Vec<&str>>() {
+        let rem:i32 = element.parse().unwrap_or_else(|_| {println!("wrogn value provided"); exit(0);});
+        rems1.append(&mut vec![rem]); 
+    }
+    let mut buf2 = String::new();
+    println!("give second array of reminders sepparated by white spaces");
+    io::stdin().read_line(&mut buf2).unwrap_or_else(|_| {println!("wrogn value provided"); exit(0);});
+    let mut rems2: Vec<i32> = vec![];
+    for element in  buf2.split_whitespace().collect::<Vec<&str>>() {
+        let rem:i32 = element.parse().unwrap_or_else(|_| {println!("wrogn value provided"); exit(0);});
+        rems2.append(&mut vec![rem]); 
+    }
+
+    let mut buf3 = String::new();
+    println!("give array of dividers sepparated by white spaces");
+    io::stdin().read_line(&mut buf3).unwrap_or_else(|_| {println!("wrogn value provided"); exit(0);});
+    let mut divs: Vec<i32> = vec![];
+    for element in  buf3.split_whitespace().collect::<Vec<&str>>() {
+        let div:i32 = element.parse().unwrap_or_else(|_| {println!("wrogn value provided"); exit(0);});
+        divs.append(&mut vec![div]); 
+    }
+
+    if rems1.len() == rems2.len() && rems1.len() == divs.len() {
+        let mut rems: Vec<i32> = vec![];
+
+        for i in  0..rems1.len() as usize {
+            rems.append(&mut vec![rems1[i] + rems2[i]]);
         }
-        if j == divs.len() as usize{
-            return x;
-        }
-        x+=1;
+        println!("{}",conv_m2(rems, divs));
+    } else {
+        println!("dividers array is not the same length as array of reminders")
     }
 }
-*/
 
 #[derive(Debug)]
 struct EucRes {
